@@ -28,14 +28,11 @@ class CreateTransactionService {
       const { total } = await transactionsRepository.getBalance();
 
       if (total - value < 0) {
-        throw new AppError(
-          'Your outcomes should not overpass your incomes',
-          400,
-        );
+        throw new AppError("You don't have enough balance.", 400);
       }
     }
 
-    const { id: category_id } = await createCategoryService.execute({
+    const transactionCategory = await createCategoryService.execute({
       title: category,
     });
 
@@ -43,7 +40,7 @@ class CreateTransactionService {
       title,
       value,
       type,
-      category_id,
+      category: transactionCategory,
     });
 
     await transactionsRepository.save(transaction);
